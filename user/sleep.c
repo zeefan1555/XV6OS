@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     int num_of_ticks = atoi(argv[1]);
     if(sleep(num_of_ticks)<0)
     {
-        printf("Canot sleep");
+        printf("Canot sleep, 11");
         exit(-1);
     }
 
