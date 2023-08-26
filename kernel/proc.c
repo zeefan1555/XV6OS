@@ -696,3 +696,17 @@ procdump(void)
     printf("\n");
   }
 }
+
+
+//获取运行状态的进程数proc
+void
+pronum(uint64 *dst)
+{
+  *dst = 0;
+  struct proc *p;
+  for(p = proc; p < &proc[NPROC]; p++)
+  {
+    if(p->state != UNUSED)
+      (*dst)++;
+  }
+}
