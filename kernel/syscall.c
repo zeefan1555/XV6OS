@@ -164,13 +164,16 @@ syscall(void)
   struct proc *p = myproc();
 
   num = p->trapframe->a7;// 系统调用编号，参见书中4.3节
-  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
-    p->trapframe->a0 = syscalls[num]();
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) 
+  {
+    p->trapframe->a0 = syscalls[num](); // 执行系统调用, 然后将返回值存入 a0
 
     // 系统调用是否匹配
     if((1 << num) & p->trace_mask)
       printf("%d syscall %s -> %d\n", p->pid, syscalls_name[num], p->trapframe->a0 ) ;
-  } else {
+  }
+  else 
+  {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);
     p->trapframe->a0 = -1;
