@@ -34,7 +34,7 @@ freebytes(uint64 *dst)
     *dst += PGSIZE;
     p = p->next;
   }
-  release(&kmem.lock)
+  release(&kmem.lock);
   
 }
 
