@@ -27,7 +27,7 @@ void
 freebytes(uint64 *dst)
 {
   *dst = 0;
-  struct run *p = kemem.freelist; //遍历内存
+  struct run *p = kmem.freelist; //遍历内存
 
   acquire(&kmem.lock);
   while(p){
