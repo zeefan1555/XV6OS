@@ -295,6 +295,9 @@ fork(void)
 
   np->state = RUNNABLE;
 
+  //子进程继承父进程的tracemask
+  np->tracemask = p->tracemask;
+
   release(&np->lock);
 
   return pid;
@@ -692,4 +695,19 @@ procdump(void)
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
   }
+}
+
+
+
+uint64
+num_usered_proc(void)
+{
+    struct proc *p;
+    uint64 num = 0;
+    for(p = proc; p < &proc[NPROC]; ++p){
+        if(p->state != UNUSED) {
+            ++num;
+        }
+    }
+    return num;
 }
