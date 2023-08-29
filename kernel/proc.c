@@ -290,13 +290,13 @@ fork(void)
   np->cwd = idup(p->cwd);
 
   safestrcpy(np->name, p->name, sizeof(p->name));
-  //将trace_mask拷贝到子进程
-
-  np->trace_mask = p->trace_mask;
 
   pid = np->pid;
 
   np->state = RUNNABLE;
+
+  //子进程继承父进程的tracemask
+  np->tracemask = p->tracemask;
 
   release(&np->lock);
 
@@ -698,15 +698,16 @@ procdump(void)
 }
 
 
-//获取运行状态的进程数proc
-void
-pronum(uint64 *dst)
+
+uint64
+num_usered_proc(void)
 {
-  *dst = 0;
-  struct proc *p;
-  for(p = proc; p < &proc[NPROC]; p++)
-  {
-    if(p->state != UNUSED)
-      (*dst)++;
-  }
+    struct proc *p;
+    uint64 num = 0;
+    for(p = proc; p < &proc[NPROC]; ++p){
+        if(p->state != UNUSED) {
+            ++num;
+        }
+    }
+    return num;
 }

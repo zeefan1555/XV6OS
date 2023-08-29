@@ -105,6 +105,9 @@ extern uint64 sys_wait(void);
 extern uint64 sys_write(void);
 extern uint64 sys_uptime(void);
 extern uint64 sys_trace(void);
+extern uint64 sys_sysinfo(void);
+
+
 
 static uint64 (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -129,9 +132,12 @@ static uint64 (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_trace]   sys_trace,
+[SYS_sysinfo] sys_sysinfo,
+
+
 };
 
-
+//syscall编号对应的名字 , 自己添加的
 static char *syscalls_name[] = {
 [SYS_fork]    "fork",
 [SYS_exit]    "exit",
@@ -155,6 +161,7 @@ static char *syscalls_name[] = {
 [SYS_mkdir]   "mkdir",
 [SYS_close]   "close",
 [SYS_trace]   "trace",
+[SYS_info]    "sysinfo",
 };
 
 void
@@ -163,19 +170,16 @@ syscall(void)
   int num;
   struct proc *p = myproc();
 
-  num = p->trapframe->a7;// 系统调用编号，参见书中4.3节
-  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) 
-  {
-    p->trapframe->a0 = syscalls[num](); // 执行系统调用, 然后将返回值存入 a0
-
-    // 系统调用是否匹配
-    if((1 << num) & p->trace_mask)
-      printf("%d syscall %s -> %d\n", p->pid, syscalls_name[num], p->trapframe->a0 ) ;
-  }
-  else 
-  {
+  num = p->trapframe->a7; // 系统调用的编号
+  if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    p->trapframe->a0 = syscalls[num]();
+  } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);
     p->trapframe->a0 = -1;
+  }
+  //trace
+  if(p->tracemask & (1 << num)){
+      printf("%d: syscall %s -> %d\n", p->pid, syscalls_name[num], p->trapframe->a0);
   }
 }
