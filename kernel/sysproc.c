@@ -110,5 +110,4 @@ sys_info(void)
 {
     printf("sysino say hai\n");
     return 0;
-
 }
