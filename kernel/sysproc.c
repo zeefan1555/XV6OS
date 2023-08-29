@@ -104,3 +104,11 @@ sys_trace(void)
 
   return 0;
 }
+
+uint64
+sys_info(void)
+{
+    printf("sysino say hai\n");
+    return 0;
+
+}
