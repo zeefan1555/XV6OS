@@ -10,14 +10,6 @@
 #define STACK_SIZE  8192
 #define MAX_THREAD  4
 
-
-struct thread {
-  char       stack[STACK_SIZE]; /* the thread's stack */
-  int        state;             /* FREE, RUNNING, RUNNABLE */
-  struct tcontext context;            /* 用户进程上下文 */
-
-};
-
 // 用户线程的上下文结构体
 struct tcontext {
   uint64 ra;
@@ -37,6 +29,14 @@ struct tcontext {
   uint64 s10;
   uint64 s11;
 };
+struct thread {
+  char       stack[STACK_SIZE]; /* the thread's stack */
+  int        state;             /* FREE, RUNNING, RUNNABLE */
+  struct tcontext context;            /* 用户进程上下文 */
+
+};
+
+
 
 struct thread all_thread[MAX_THREAD];
 struct thread *current_thread;
