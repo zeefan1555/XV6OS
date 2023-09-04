@@ -103,6 +103,8 @@ thread_create(void (*func)())
   }
   t->state = RUNNABLE;
   // YOUR CODE HERE
+  t->context.ra = (uint64)func;                   // 设定函数返回地址
+  t->context.sp = (uint64)t->stack + STACK_SIZE;  // 设定栈指针
 }
 
 void 
