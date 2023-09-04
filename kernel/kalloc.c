@@ -17,6 +17,12 @@ extern char end[]; // first address after kernel.
 struct run {
   struct run *next;
 };
+struct ref_stru {
+  struct spinlock lock;  // 引用计数需要加锁
+  int cnt[PHYSTOP / PGSIZE];  // 引用计数
+} ref;
+
+
 
 struct {
   struct spinlock lock;
@@ -89,7 +95,7 @@ kalloc(void)
   {
     kmem.freelist = r->next;
     acquire(&ref.lock);             //操作引用计数加锁
-    ref.cnt[(uint64)r/PGSIZE] = 1  // 将引用计数初始化为1
+    ref.cnt[(uint64)r/PGSIZE] = 1;  // 将引用计数初始化为1
     release(&ref.lock);
   }
   release(&kmem.lock);
@@ -98,11 +104,6 @@ kalloc(void)
     memset((char*)r, 5, PGSIZE); // fill with junk
   return (void*)r;
 }
-
-struct ref_stru {
-  struct spinlock lock;  // 引用计数需要加锁
-  int cnt[PHYSTOP / PGSIZE];  // 引用计数
-} ref;
 
 
 
