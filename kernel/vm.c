@@ -362,6 +362,13 @@ copyout(pagetable_t pagetable, uint64 dstva, char *src, uint64 len)
   while(len > 0){
     va0 = PGROUNDDOWN(dstva);
     pa0 = walkaddr(pagetable, va0);
+
+    // 处理COW页面的情况
+    if(cowpage(pagetable, va0) == 0){
+       // 更换目标物理地址
+      pa0 = (uint64)cowalloc(pagetable, va0);
+    }
+
     if(pa0 == 0)
       return -1;
     n = PGSIZE - (dstva - va0);
