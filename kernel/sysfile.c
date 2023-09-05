@@ -321,7 +321,7 @@ sys_open(void)
     // 若符号链接指向的仍然是符号链接，则递归的跟随它
     // 直到找到真正指向的文件
     // 但深度不能超过MAX_SYMLINK_DEPTH
-    for(int i = 0; i < MAX_SYMLINK_DEPTH; ++i) {
+    for(int i = 0; i < 10; ++i) {
       // 读出符号链接指向的路径
       if(readi(ip, 0, (uint64)path, 0, MAXPATH) != MAXPATH) {
         iunlockput(ip);
