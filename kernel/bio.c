@@ -139,15 +139,12 @@ brelse(struct buf *b)
 
   acquire(&bcache.lock);
   b->refcnt--;
-  if (b->refcnt == 0) {
-    // no one is waiting for it.
-    b->next->prev = b->prev;
-    b->prev->next = b->next;
-    b->next = bcache.head.next;
-    b->prev = &bcache.head;
-    bcache.head.next->prev = b;
-    bcache.head.next = b;
-  }
+  
+  // 更新时间戳
+  // 由于LRU改为使用时间戳判定，不再需要头插法
+  acquire(&tickslock);
+  b->timestamp = ticks;
+  release(&tickslock);
   
   release(&bcache.lock);
 }
