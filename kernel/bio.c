@@ -23,6 +23,13 @@
 #include "fs.h"
 #include "buf.h"
 
+#define NBUCKET 13
+#define HASH(id) (id % NBUCKET)
+
+struct hashbuf {
+  struct buf head;       // 头节点
+  struct spinlock lock;  // 锁
+};
 struct {
   struct spinlock lock;
   struct buf buf[NBUF];
