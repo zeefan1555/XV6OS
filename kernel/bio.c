@@ -35,6 +35,7 @@ struct {
   struct spinlock lock;
   struct buf buf[NBUF];
 
+  struct hashbuf buckets[NBUCKET];  // 散列桶
   // Linked list of all buffers, through prev/next.
   // Sorted by how recently the buffer was used.
   // head.next is most recent, head.prev is least.
