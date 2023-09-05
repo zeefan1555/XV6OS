@@ -448,6 +448,8 @@ itrunc(struct inode *ip)
     }
   }
 
+  struct buf* bp1;
+  uint* a1;
   if(ip->addrs[NDIRECT]){
     bp = bread(ip->dev, ip->addrs[NDIRECT]);
     a = (uint*)bp->data;
