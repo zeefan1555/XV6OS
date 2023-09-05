@@ -5,6 +5,14 @@
 #define ROOTINO  1   // root i-number
 #define BSIZE 1024  // block size
 
+#define NDIRECT 11
+#define NINDIRECT (BSIZE / sizeof(uint))
+#define NDINDIRECT ((BSIZE / sizeof(uint)) * (BSIZE / sizeof(uint)))
+#define MAXFILE (NDIRECT + NINDIRECT + NDINDIRECT)
+#define NADDR_PER_BLOCK (BSIZE / sizeof(uint))  // 一个块中的地址数量
+
+
+
 // Disk layout:
 // [ boot block | super block | log | inode blocks |
 //                                          free bit map | data blocks]
