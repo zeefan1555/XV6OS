@@ -30,6 +30,7 @@ struct hashbuf {
   struct buf head;       // 头节点
   struct spinlock lock;  // 锁
 };
+
 struct {
   struct spinlock lock;
   struct buf buf[NBUF];
@@ -41,23 +42,31 @@ struct {
 } bcache;
 
 void
-binit(void)
-{
-  struct buf *b;
+binit(void) {
+  struct buf* b;
+  char lockname[16];
 
-  initlock(&bcache.lock, "bcache");
+  for(int i = 0; i < NBUCKET; ++i) {
+    // 初始化散列桶的自旋锁
+    snprintf(lockname, sizeof(lockname), "bcache_%d", i);
+    initlock(&bcache.buckets[i].lock, lockname);
+
+    // 初始化散列桶的头节点
+    bcache.buckets[i].head.prev = &bcache.buckets[i].head;
+    bcache.buckets[i].head.next = &bcache.buckets[i].head;
+  }
 
   // Create linked list of buffers
-  bcache.head.prev = &bcache.head;
-  bcache.head.next = &bcache.head;
-  for(b = bcache.buf; b < bcache.buf+NBUF; b++){
-    b->next = bcache.head.next;
-    b->prev = &bcache.head;
+  for(b = bcache.buf; b < bcache.buf + NBUF; b++) {
+    // 利用头插法初始化缓冲区列表,全部放到散列桶0上
+    b->next = bcache.buckets[0].head.next;
+    b->prev = &bcache.buckets[0].head;
     initsleeplock(&b->lock, "buffer");
-    bcache.head.next->prev = b;
-    bcache.head.next = b;
+    bcache.buckets[0].head.next->prev = b;
+    bcache.buckets[0].head.next = b;
   }
 }
+
 
 // Look through buffer cache for block on device dev.
 // If not found, allocate a buffer.
